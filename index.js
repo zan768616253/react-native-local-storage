@@ -8,33 +8,49 @@ class LocalStorage {
     }
 
     getItem( key ) {
-        return new Promise((resolve, reject) => {
-            RNLocalStorage.multiGet([key], function(errors, result) {
-                // Unpack result to get value from [[key,value]]
-                var value = (result && result[0] && result[0][1]) ? result[0][1] : null;
-                var errs = convertErrors(errors);
-                callback && callback(errs && errs[0], value);
-                if (errs) {
-                  reject(errs[0]);
-                } else {
-                  resolve(value);
-                }
-              })
-        })
+      const self = this
+      return new Promise((resolve, reject) => {
+          RNLocalStorage.multiGet([key], function(errors, result) {
+              // Unpack result to get value from [[key,value]]
+              var value = (result && result[0] && result[0][1]) ? result[0][1] : null;
+              var errs = self.convertErrors(errors);
+              if (errs) {
+                reject(errs[0]);
+              } else {
+                resolve(value);
+              }
+            })
+      })
     }
 
     setItem( key, value) {
-        return new Promise((resolve, reject) => {
-            RNLocalStorage.multiSet([[key,value]], function(errors) {
-                var errs = convertErrors(errors);
-                callback && callback(errs && errs[0]);
-                if (errs) {
-                  reject(errs[0]);
-                } else {
-                  resolve(null);
-                }
-              })
-        })
+      const self = this
+      return new Promise((resolve, reject) => {
+          RNLocalStorage.multiSet([[key,value]], function(errors) {
+              var errs = self.convertErrors(errors);
+              if (errs) {
+                reject(errs[0]);
+              } else {
+                resolve(null);
+              }
+            })
+      })
+    }
+
+    convertErrors(errs) {
+      if (!errs) {
+        return null;
+      }
+      return (Array.isArray(errs) ? errs : [errs]).map((e) => convertError(e));
+    }
+    
+    convertError(error) {
+      if (!error) {
+        return null;
+      }
+      var out = new Error(error.message);
+      out.key = error.key; // flow doesn't like this :(
+      return out;
     }
 }
 
