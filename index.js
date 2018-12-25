@@ -39,7 +39,7 @@ class LocalStorage {
 
     removeItem( key ) {
       return new Promise((resolve, reject) => {
-        RCTAsyncStorage.multiRemove([key], function(errors) {
+        RNLocalStorage.multiRemove([key], function(errors) {
           var errs = convertErrors(errors);
           if (errs) {
             reject(errs[0]);
@@ -52,7 +52,7 @@ class LocalStorage {
 
     clear () {
       return new Promise((resolve, reject) => {
-        RCTAsyncStorage.clear(function(error) {
+        RNLocalStorage.clear(function(error) {
           if (error && convertError(error)){
             reject(convertError(error));
           } else {
