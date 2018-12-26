@@ -38,6 +38,7 @@ class LocalStorage {
     }
 
     removeItem( key ) {
+      const self = this
       return new Promise((resolve, reject) => {
         RNLocalStorage.multiRemove([key], function(errors) {
           var errs = self.convertErrors(errors);
@@ -51,6 +52,7 @@ class LocalStorage {
     }
 
     clear () {
+      const self = this
       return new Promise((resolve, reject) => {
         RNLocalStorage.clear(function(error) {
           if (error && self.convertError(error)){
